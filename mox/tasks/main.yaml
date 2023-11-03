@@ -17,6 +17,7 @@
     state: directory
   with_items:
     - "{{ mox_dir }}/config"
+    - "{{ mox_dir }}/config/dkim"
     - "{{ mox_data_dir }}"
 
 - name: Install mox binary
@@ -38,3 +39,26 @@
   with_items:
     - domains.conf
     - mox.conf
+
+- name: generate DKIM ed25519 keys from current configs
+  shell: |
+    "{{ mox_dir }}/mox" dkim gened25519 > "{{ mox_dir }}"/config/dkim/"{{ mox_dkim_selector }}{{ item }}"._domainkey."{{ mox_domain }}".ed25519key.pkcs8.pem
+  with_items: ["a","c"] 
+  when: mox_auto_gen_dkim == "true"
+    
+
+- name: generate DKIM rsa keys from current configs #yeah it's ugly but it works. Feel free merge it into 1 cool loop please
+  shell: |
+    "{{ mox_dir }}/mox" dkim genrsa > "{{ mox_dir }}"/config/dkim/"{{ mox_dkim_selector }}{{ item }}"._domainkey."{{ mox_domain }}".rsakey.pkcs8.pem
+  with_items: ["b","d"]
+  #These sequences of item is important: we need 4 keys, with mixed type of rsa and ed25519
+  #so our record will be selector a,c in ed25519 - selectorb,d in rsa
+  when: mox_auto_gen_dkim == "true"
+
+- name: correct permission for dkim keys
+  shell: |
+    chown "{{ mox_user }}":root "{{ mox_dir }}/config/dkim"
+    chmod 750 "{{ mox_dir }}/config/dkim"
+    chmod 640 "{{ mox_dir }}/config/dkim"/*
+  when: mox_auto_gen_dkim == "true"
+  

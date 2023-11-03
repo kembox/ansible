@@ -12,15 +12,15 @@ DataDir: {{ mox_data_dir }}
 # Trace logs SMTP and IMAP protocol transcripts, with traceauth also messages with
 # passwords, and tracedata on top of that also the full data exchanges (full
 # messages), which can be a large amount of data.
-LogLevel: {{ mox_log_level }} 
+LogLevel: {{ mox_log_level }}
 
 # User to switch to after binding to all sockets as root. Default: mox. If the
 # value is not a known user, it is parsed as integer and used as uid and gid.
 # (optional)
-User: {{ mox_user }} 
+User: {{ mox_user }}
 
 # Full hostname of system, e.g. mail.<domain>
-Hostname:  {{ mox_mail_hostname }}
+Hostname:  {{mox_mail_hostname}}
 
 # If enabled, a single DNS TXT lookup of _updates.xmox.nl is done every 24h to
 # check for a new release. Each time a new release is found, a changelog is
@@ -69,14 +69,14 @@ Listeners:
 			Enabled: true
 
 			# Default 80. (optional)
-			Port: {{ mox_local_admin_port }} 
+			Port: {{ mox_local_admin_port }}
 
 		# Webmail client, for reading email. (optional)
 		WebmailHTTP:
 			Enabled: true
 
 			# Default 80. (optional)
-			Port: {{ mox_local_webmail_port }} 
+			Port: {{ mox_local_webmail_port }}
 
 		# Serve prometheus metrics, for monitoring. You should not enable this on a public
 		# IP. (optional)
@@ -92,7 +92,7 @@ Listeners:
 			# port 443 directly. Autoconfig requests will be made to port 443, so you'll have
 			# to add an external mechanism to get the connection here, e.g. by configuring
 			# port forwarding. (optional)
-			Port: {{ mox_local_autoconfig_port }} 
+			Port: {{ mox_local_autoconfig_port }}
 
 			# If set, plain HTTP instead of HTTPS is spoken on the configured port. Can be
 			# useful when the autoconfig domain is reverse proxied. (optional)
@@ -111,7 +111,7 @@ Listeners:
 
 			# If set, plain HTTP instead of HTTPS is spoken on the configured port. Can be
 			# useful when the mta-sts domain is reverse proxied. (optional)
-			NonTLS: {{ mox_under_reverse_proxy }} 
+			NonTLS: {{ mox_under_reverse_proxy }}
 
 		# All configured WebHandlers will serve on an enabled listener. (optional)
 		WebserverHTTP:
