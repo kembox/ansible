@@ -6,6 +6,7 @@ Though, it greats when it stands alone only. To run it under a reverse proxy, we
 - Generate certificates ourselves
 - Adjust mox.conf to points to correct certs's location
 - Configure nginx to point to new local port that mox's listening to ( 127.0.0.1:81 )
+
 Beside that,`quickstart` is very handy but it's not easy to reuse. Everytime it runs it creates new configs, DKIM keys, passwords that requires changes from our side as well. ( Not to blame, it's designed for a quick initialization )
 This role aims to solve the problems above: to automate the certs and nginx setup, to be idempotent execution so we can update small details easily without replacing old configs. 
 
