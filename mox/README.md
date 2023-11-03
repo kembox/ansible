@@ -8,11 +8,11 @@ Sample playbook:
   vars_files: 
     - ../ansible-playbooks/var_files/secrets/mox.yaml
   vars:
-    mox_domain: "dbgsym.dev"
-    mox_mail_hostname: "mail.dbgsym.dev"
-    mox_public_ip: "103.138.113.144"
-    mox_default_account: "tungdam"
-    mox_mta_sts_policy_version_id: "20231101T062646"
+    mox_domain: "yourdomain.com"
+    mox_mail_hostname: "mail.yourdomain.com"
+    mox_public_ip: "x.x.x.x"
+    mox_default_account: "you"
+    mox_mta_sts_policy_version_id: "20232323062646"
 
   roles: 
     - role: nginx-certbot 
