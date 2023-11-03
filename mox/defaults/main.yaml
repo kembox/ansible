@@ -12,7 +12,9 @@ mox_local_autoconfig_port: "81"
 mox_local_mta_sts_port: "81"
 mox_local_web_server_port: "81"
 
-#TO CHANGE
+#This mox role should be run with nginx-certbot role so we dont need to take care of certificates part
+#Just let certbot handles everything
+#Only change these value if you generate certificates somewhere yourself
 mox_tls_smtp_cert_chain_file: "/etc/letsencrypt/live/{{ mox_mail_hostname }}/fullchain.pem"
 mox_tls_smtp_key_file: "/etc/letsencrypt/live/{{ mox_mail_hostname }}/privkey.pem"
 mox_tls_mta_sts_chain_file: "/etc/letsencrypt/live/mta-sts.{{ mox_domain }}/fullchain.pem"
@@ -21,6 +23,7 @@ mox_tls_autoconfig_chain_file: "/etc/letsencrypt/live/autoconfig.{{ mox_domain }
 mox_tls_autoconfig_key_file: "/etc/letsencrypt/live/autoconfig.{{ mox_domain }}/privkey.pem"
 
 
+#TO CHANGE
 mox_public_ip: "your_ip"
 mox_domain: "yourdomain.com"
 mox_mail_hostname: "mail.yourdomain.com"
