@@ -87,9 +87,6 @@
   register: dns_output
   changed_when: false
 
-- name: setup nginx proxy and related certificates
-  include: nginx_cert.yaml
-
 - name: Print out instruction to update DNS records  
   pause:
     prompt: "{{ dns_output.stdout  }}\nPLEASE UPDATE YOUR DNS RECORDS FOLLOWING THIS INSTRUCTION TO FINISH THIS SETUP"
