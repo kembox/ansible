@@ -1,0 +1,285 @@
+# NOTE: This config file is in 'sconf' format. Indent with tabs. Comments must be
+# on their own line, they don't end a line. Do not escape or quote strings.
+# Details: https://pkg.go.dev/github.com/mjl-/sconf.
+
+
+# Domains for which email is accepted. For internationalized domains, use their
+# IDNA names in UTF-8.
+Domains:
+	{{ mox_domain }}:
+
+		# If not empty, only the string before the separator is used to for email delivery
+		# decisions. For example, if set to "+", you+anything@example.com will be
+		# delivered to you@example.com. (optional)
+		LocalpartCatchallSeparator: +
+
+		# With DKIM signing, a domain is taking responsibility for (content of) emails it
+		# sends, letting receiving mail servers build up a (hopefully positive) reputation
+		# of the domain, which can help with mail delivery. (optional)
+		DKIM:
+
+			# Emails can be DKIM signed. Config parameters are per selector. A DNS record must
+			# be created for each selector. Add the name to Sign to use the selector for
+			# signing messages.
+			Selectors:
+				{{mox_dkim_selector}}a:
+
+					# Period a signature is valid after signing, as duration, e.g. 72h. The period
+					# should be enough for delivery at the final destination, potentially with several
+					# hops/relays. In the order of days at least. (optional)
+					Expiration: 72h
+
+					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
+					PrivateKeyFile: dkim/2023a._domainkey.dbgsym.dev.20231101T132646.ed25519key.pkcs8.pem
+				{{mox_dkim_selector}}b:
+
+					# Period a signature is valid after signing, as duration, e.g. 72h. The period
+					# should be enough for delivery at the final destination, potentially with several
+					# hops/relays. In the order of days at least. (optional)
+					Expiration: 72h
+
+					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
+					PrivateKeyFile: dkim/2023b._domainkey.dbgsym.dev.20231101T132646.rsakey.pkcs8.pem
+				{{mox_dkim_selector}}c:
+
+					# Period a signature is valid after signing, as duration, e.g. 72h. The period
+					# should be enough for delivery at the final destination, potentially with several
+					# hops/relays. In the order of days at least. (optional)
+					Expiration: 72h
+
+					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
+					PrivateKeyFile: dkim/2023c._domainkey.dbgsym.dev.20231101T132646.ed25519key.pkcs8.pem
+				{{mox_dkim_selector}}d:
+
+					# Period a signature is valid after signing, as duration, e.g. 72h. The period
+					# should be enough for delivery at the final destination, potentially with several
+					# hops/relays. In the order of days at least. (optional)
+					Expiration: 72h
+
+					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
+					PrivateKeyFile: dkim/2023d._domainkey.dbgsym.dev.20231101T132646.rsakey.pkcs8.pem
+
+			# List of selectors that emails will be signed with. (optional)
+			Sign:
+				- {{mox_dkim_selector}}a
+				- {{mox_dkim_selector}}b
+
+		# With DMARC, a domain publishes, in DNS, a policy on how other mail servers
+		# should handle incoming messages with the From-header matching this domain and/or
+		# subdomain (depending on the configured alignment). Receiving mail servers use
+		# this to build up a reputation of this domain, which can help with mail delivery.
+		# A domain can also publish an email address to which reports about DMARC
+		# verification results can be sent by verifying mail servers, useful for
+		# monitoring. Incoming DMARC reports are automatically parsed, validated, added to
+		# metrics and stored in the reporting database for later display in the admin web
+		# pages. (optional)
+		DMARC:
+
+			# Address-part before the @ that accepts DMARC reports. Must be
+			# non-internationalized. Recommended value: dmarc-reports.
+			Localpart: dmarc-reports
+
+			# Account to deliver to.
+			Account: {{ mox_default_account }}
+
+			# Mailbox to deliver to, e.g. DMARC.
+			Mailbox: DMARC
+
+		# With MTA-STS a domain publishes, in DNS, presence of a policy for
+		# using/requiring TLS for SMTP connections. The policy is served over HTTPS.
+		# (optional)
+		MTASTS:
+
+			# Policies are versioned. The version must be specified in the DNS record. If you
+			# change a policy, first change it in mox, then update the DNS record.
+			PolicyID: {{ mox_mta_sts_policy_version_id }} 
+
+			# testing, enforce or none. If set to enforce, a remote SMTP server will not
+			# deliver email to us if it cannot make a TLS connection.
+			Mode: enforce
+
+			# How long a remote mail server is allowed to cache a policy. Typically 1 or
+			# several weeks.
+			MaxAge: 24h0m0s
+
+			# List of server names allowed for SMTP. If empty, the configured hostname is set.
+			# Host names can contain a wildcard (*) as a leading label (matching a single
+			# label, e.g. *.example matches host.example, not sub.host.example). (optional)
+			MX:
+				- {{ mox_domain }}
+
+		# With TLSRPT a domain specifies in DNS where reports about encountered SMTP TLS
+		# behaviour should be sent. Useful for monitoring. Incoming TLS reports are
+		# automatically parsed, validated, added to metrics and stored in the reporting
+		# database for later display in the admin web pages. (optional)
+		TLSRPT:
+
+			# Address-part before the @ that accepts TLSRPT reports. Recommended value:
+			# tls-reports.
+			Localpart: tls-reports
+
+			# Account to deliver to.
+			Account: {{ mox_default_account }} 
+
+			# Mailbox to deliver to, e.g. TLSRPT.
+			Mailbox: TLSRPT
+
+# Accounts to which email can be delivered. An account can accept email for
+# multiple domains, for multiple localparts, and deliver to multiple mailboxes.
+Accounts:
+	{{ mox_default_account }}:
+
+		# Default domain for account. Deprecated behaviour: If a destination is not a full
+		# address but only a localpart, this domain is added to form a full address.
+		Domain: dbgsym.dev
+
+		# Destinations, keys are email addresses (with IDNA domains). If the address is of
+		# the form '@domain', i.e. with localpart missing, it serves as a catchall for the
+		# domain, matching all messages that are not explicitly configured. Deprecated
+		# behaviour: If the address is not a full address but a localpart, it is combined
+		# with Domain to form a full address.
+		Destinations:
+			{{mox_default_account}}@{{mox_domain}}: nil
+# If you receive email from mailing lists, you may want to configure them like the
+# example below (remove the empty/false SMTPMailRegexp and IsForward).
+# If you are receiving forwarded email, see the IsForwarded option in a Ruleset.
+#			{{mox_default_account}}@{{mox_domain}}:
+#		
+#				# Mailbox to deliver to if none of Rulesets match. Default: Inbox. (optional)
+#				Mailbox: 
+#		
+#				# Delivery rules based on message and SMTP transaction. You may want to match each
+#				# mailing list by SMTP MailFrom address, VerifiedDomain and/or List-ID header
+#				# (typically <listname.example.org> if the list address is listname@example.org),
+#				# delivering them to their own mailbox. (optional)
+#				Rulesets:
+#					-
+#		
+#						# Matches if this regular expression matches (a substring of) the SMTP MAIL FROM
+#						# address (not the message From-header). E.g. '^user@example\.org$'. (optional)
+#						SMTPMailFromRegexp: 
+#		
+#						# Matches if this domain matches an SPF- and/or DKIM-verified (sub)domain.
+#						# (optional)
+#						VerifiedDomain: list.example.org
+#		
+#						# Matches if these header field/value regular expressions all match (substrings
+#						# of) the message headers. Header fields and valuees are converted to lower case
+#						# before matching. Whitespace is trimmed from the value before matching. A header
+#						# field can occur multiple times in a message, only one instance has to match. For
+#						# mailing lists, you could match on ^list-id$ with the value typically the mailing
+#						# list address in angled brackets with @ replaced with a dot, e.g.
+#						# <name\.lists\.example\.org>. (optional)
+#						HeadersRegexp:
+#							^list-id$: <name\.list\.example\.org>
+#		
+#						# Influences spam filtering only, this option does not change whether a message
+#						# matches this ruleset. Can only be used together with SMTPMailFromRegexp and
+#						# VerifiedDomain. SMTPMailFromRegexp must be set to the address used to deliver
+#						# the forwarded message, e.g. '^user(|\+.*)@forward\.example$'. Changes to junk
+#						# analysis: 1. Messages are not rejects for failing a DMARC policy, because a
+#						# legitimate forwarded message without valid/intact/aligned DKIM signature would
+#						# be rejected because any verified SPF domain will be 'unaligned', of the
+#						# forwarding mail server. 2. The sending mail server IP address, and sending EHLO
+#						# and MAIL FROM domains and matching DKIM domain aren't used in future
+#						# reputation-based spam classifications (but other verified DKIM domains are)
+#						# because the forwarding server is not a useful spam signal for future messages.
+#						# (optional)
+#						IsForward: false
+#		
+#						# Influences spam filtering only, this option does not change whether a message
+#						# matches this ruleset. If this domain matches an SPF- and/or DKIM-verified
+#						# (sub)domain, the message is accepted without further spam checks, such as a junk
+#						# filter or DMARC reject evaluation. DMARC rejects should not apply for mailing
+#						# lists that are not configured to rewrite the From-header of messages that don't
+#						# have a passing DKIM signature of the From-domain. Otherwise, by rejecting
+#						# messages, you may be automatically unsubscribed from the mailing list. The
+#						# assumption is that mailing lists do their own spam filtering/moderation.
+#						# (optional)
+#						ListAllowDomain: list.example.org
+#		
+#						# Influences spam filtering only, this option does not change whether a message
+#						# matches this ruleset. If a message is classified as spam, it isn't rejected
+#						# during the SMTP transaction (the normal behaviour), but accepted during the SMTP
+#						# transaction and delivered to the specified mailbox. The specified mailbox is not
+#						# automatically cleaned up like the account global Rejects mailbox, unless set to
+#						# that Rejects mailbox. (optional)
+#						AcceptRejectsToMailbox: 
+#		
+#						# Mailbox to deliver to if this ruleset matches.
+#						Mailbox: Lists/Example
+#		
+#				# Full name to use in message From header when composing messages coming from this
+#				# address with webmail. (optional)
+#				FullName: 
+#		
+
+		# If configured, messages classified as weakly spam are rejected with instructions
+		# to retry delivery, but this time with a signed token added to the subject.
+		# During the next delivery attempt, the signed token will bypass the spam filter.
+		# Messages with a clear spam signal, such as a known bad reputation, are
+		# rejected/delayed without a signed token. (optional)
+		SubjectPass:
+
+			# How long unique values are accepted after generating, e.g. 12h.
+			Period: 12h0m0s
+
+		# Mail that looks like spam will be rejected, but a copy can be stored temporarily
+		# in a mailbox, e.g. Rejects. If mail isn't coming in when you expect, you can
+		# look there. The mail still isn't accepted, so the remote mail server may retry
+		# (hopefully, if legitimate), or give up (hopefully, if indeed a spammer).
+		# Messages are automatically removed from this mailbox, so do not set it to a
+		# mailbox that has messages you want to keep. (optional)
+		RejectsMailbox: Rejects
+
+		# Automatically set $Junk and $NotJunk flags based on mailbox messages are
+		# delivered/moved/copied to. Email clients typically have too limited
+		# functionality to conveniently set these flags, especially $NonJunk, but they can
+		# all move messages to a different mailbox, so this helps them. (optional)
+		AutomaticJunkFlags:
+
+			# If enabled, flags will be set automatically if they match a regular expression
+			# below. When two of the three mailbox regular expressions are set, the remaining
+			# one will match all unmatched messages. Messages are matched in the order
+			# specified and the search stops on the first match. Mailboxes are lowercased
+			# before matching.
+			Enabled: true
+
+			# Example: ^(junk|spam). (optional)
+			JunkMailboxRegexp: ^(junk|spam)
+
+			# Example: ^(inbox|neutral|postmaster|dmarc|tlsrpt|rejects), and you may wish to
+			# add trash depending on how you use it, or leave this empty. (optional)
+			NeutralMailboxRegexp: ^(inbox|neutral|postmaster|dmarc|tlsrpt|rejects)
+
+		# Content-based filtering, using the junk-status of individual messages to rank
+		# words in such messages as spam or ham. It is recommended you always set the
+		# applicable (non)-junk status on messages, and that you do not empty your Trash
+		# because those messages contain valuable ham/spam training information.
+		# (optional)
+		JunkFilter:
+
+			# Approximate spaminess score between 0 and 1 above which emails are rejected as
+			# spam. Each delivery attempt adds a little noise to make it slightly harder for
+			# spammers to identify words that strongly indicate non-spaminess and use it to
+			# bypass the filter. E.g. 0.95.
+			Threshold: 0.950000
+			Params:
+
+				# Track ham/spam ranking for single words. (optional)
+				Onegrams: true
+
+				# Maximum power a word (combination) can have. If spaminess is 0.99, and max power
+				# is 0.1, spaminess of the word will be set to 0.9. Similar for ham words.
+				MaxPower: 0.010000
+
+				# Number of most spammy/hammy words to use for calculating probability. E.g. 10.
+				TopWords: 10
+
+				# Ignore words that are this much away from 0.5 haminess/spaminess. E.g. 0.1,
+				# causing word (combinations) of 0.4 to 0.6 to be ignored. (optional)
+				IgnoreWords: 0.100000
+
+				# Occurrences in word database until a word is considered rare and its influence
+				# in calculating probability reduced. E.g. 1 or 2. (optional)
+				RareWords: 2

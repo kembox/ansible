@@ -1,0 +1,33 @@
+---
+mox_dir : "/var/mox"
+mox_data_dir: "/var/mox/data"
+mox_user: "mox"
+mox_under_reverse_proxy : "true"
+mox_log_level: "debug"
+mox_local_ip: "127.0.0.1"
+mox_local_http_port: "1080"
+mox_local_admin_port: "1080"
+mox_local_webmail_port: "1080"
+mox_local_autoconfig_port: "81"
+mox_local_mta_sts_port: "81"
+mox_local_web_server_port: "81"
+
+#TO CHANGE
+mox_tls_smtp_cert_chain_file: "/etc/letsencrypt/live/{{ mox_mail_hostname }}/fullchain.pem"
+mox_tls_smtp_key_file: "/etc/letsencrypt/live/{{ mox_mail_hostname }}/privkey.pem"
+mox_tls_mta_sts_chain_file: "/etc/letsencrypt/live/mta-sts.{{ mox_domain }}/fullchain.pem"
+mox_tls_mta_sts_key_file: "/etc/letsencrypt/live/mta-sts.{{ mox_domain }}/privkey.pem"
+mox_tls_autoconfig_chain_file: "/etc/letsencrypt/live/autoconfig.{{ mox_domain }}/fullchain.pem"
+mox_tls_autoconfig_key_file: "/etc/letsencrypt/live/autoconfig.{{ mox_domain }}/privkey.pem"
+
+
+mox_public_ip: "your_ip"
+mox_domain: "yourdomain.com"
+mox_mail_hostname: "mail.yourdomain.com"
+mox_dkim_selector: "2023" #random string to generate DKIM key
+mox_default_account: "you_human_user"
+mox_mta_sts_policy_version_id: "202311v1"
+#You may want to pick the version number yourself
+#The version must be specified in the DNS record. If you
+# change a policy, first change it in mox, then update the DNS record.
+

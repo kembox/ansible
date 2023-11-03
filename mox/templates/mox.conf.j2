@@ -1,0 +1,202 @@
+# NOTE: This config file is in 'sconf' format. Indent with tabs. Comments must be
+# on their own line, they don't end a line. Do not escape or quote strings.
+# Details: https://pkg.go.dev/github.com/mjl-/sconf.
+
+
+# Directory where all data is stored, e.g. queue, accounts and messages, ACME TLS
+# certs/keys. If this is a relative path, it is relative to the directory of
+# mox.conf.
+DataDir: {{ mox_data_dir }}
+
+# Default log level, one of: error, info, debug, trace, traceauth, tracedata.
+# Trace logs SMTP and IMAP protocol transcripts, with traceauth also messages with
+# passwords, and tracedata on top of that also the full data exchanges (full
+# messages), which can be a large amount of data.
+LogLevel: {{ mox_log_level }} 
+
+# User to switch to after binding to all sockets as root. Default: mox. If the
+# value is not a known user, it is parsed as integer and used as uid and gid.
+# (optional)
+User: {{ mox_user }} 
+
+# Full hostname of system, e.g. mail.<domain>
+Hostname:  {{ mox_mail_hostname }}
+
+# If enabled, a single DNS TXT lookup of _updates.xmox.nl is done every 24h to
+# check for a new release. Each time a new release is found, a changelog is
+# fetched from https://updates.xmox.nl/changelog and delivered to the postmaster
+# mailbox. (optional)
+#
+# RECOMMENDED: please enable to stay up to date
+#
+#CheckUpdates: true
+
+# File containing hash of admin password, for authentication in the web admin
+# pages (if enabled). (optional)
+AdminPasswordFile: adminpasswd
+
+# Listeners are groups of IP addresses and services enabled on those IP addresses,
+# such as SMTP/IMAP or internal endpoints for administration or Prometheus
+# metrics. All listeners with SMTP/IMAP services enabled will serve all configured
+# domains. If the listener is named 'public', it will get a few helpful additional
+# configuration checks, for acme automatic tls certificates and monitoring of ips
+# in dnsbls if those are configured.
+Listeners:
+	internal:
+
+		# Use 0.0.0.0 to listen on all IPv4 and/or :: to listen on all IPv6 addresses, but
+		# it is better to explicitly specify the IPs you want to use for email, as mox
+		# will make sure outgoing connections will only be made from one of those IPs.
+		IPs:
+			- {{ mox_local_ip }}
+
+		# If empty, the config global Hostname is used. (optional)
+		Hostname: localhost
+
+		# Account web interface, for email users wanting to change their accounts, e.g.
+		# set new password, set new delivery rulesets. Served at /. (optional)
+		AccountHTTP:
+			Enabled: true
+
+			# Default 80. (optional)
+			Port: {{ mox_local_webmail_port }}
+
+		# Admin web interface, for managing domains, accounts, etc. Served at /admin/.
+		# Preferably only enable on non-public IPs. Hint: use 'ssh -L 8080:localhost:80
+		# you@yourmachine' and open http://localhost:8080/admin/, or set up a tunnel (e.g.
+		# WireGuard) and add its IP to the mox 'internal' listener. (optional)
+		AdminHTTP:
+			Enabled: true
+
+			# Default 80. (optional)
+			Port: {{ mox_local_admin_port }} 
+
+		# Webmail client, for reading email. (optional)
+		WebmailHTTP:
+			Enabled: true
+
+			# Default 80. (optional)
+			Port: {{ mox_local_webmail_port }} 
+
+		# Serve prometheus metrics, for monitoring. You should not enable this on a public
+		# IP. (optional)
+		MetricsHTTP:
+			Enabled: true
+
+		# Serve autoconfiguration/autodiscovery to simplify configuring email
+		# applications, will use port 443. Requires a TLS config. (optional)
+		AutoconfigHTTPS:
+			Enabled: true
+
+			# TLS port, 443 by default. You should only override this if you cannot listen on
+			# port 443 directly. Autoconfig requests will be made to port 443, so you'll have
+			# to add an external mechanism to get the connection here, e.g. by configuring
+			# port forwarding. (optional)
+			Port: {{ mox_local_autoconfig_port }} 
+
+			# If set, plain HTTP instead of HTTPS is spoken on the configured port. Can be
+			# useful when the autoconfig domain is reverse proxied. (optional)
+			NonTLS: {{ mox_under_reverse_proxy }}
+
+		# Serve MTA-STS policies describing SMTP TLS requirements. Requires a TLS config.
+		# (optional)
+		MTASTSHTTPS:
+			Enabled: true
+
+			# TLS port, 443 by default. You should only override this if you cannot listen on
+			# port 443 directly. MTA-STS requests will be made to port 443, so you'll have to
+			# add an external mechanism to get the connection here, e.g. by configuring port
+			# forwarding. (optional)
+			Port: {{ mox_local_mta_sts_port }}
+
+			# If set, plain HTTP instead of HTTPS is spoken on the configured port. Can be
+			# useful when the mta-sts domain is reverse proxied. (optional)
+			NonTLS: {{ mox_under_reverse_proxy }} 
+
+		# All configured WebHandlers will serve on an enabled listener. (optional)
+		WebserverHTTP:
+			Enabled: true
+
+			# Port for plain HTTP (non-TLS) webserver. (optional)
+			Port: {{ mox_local_web_server_port }}
+	public:
+
+		# Use 0.0.0.0 to listen on all IPv4 and/or :: to listen on all IPv6 addresses, but
+		# it is better to explicitly specify the IPs you want to use for email, as mox
+		# will make sure outgoing connections will only be made from one of those IPs.
+		IPs:
+			- {{ mox_public_ip }}
+
+		# For SMTP/IMAP STARTTLS, direct TLS and HTTPS connections. (optional)
+		TLS:
+
+			# Key and certificate files are opened by the privileged root process and passed
+			# to the unprivileged mox process, so no special permissions are required.
+			# (optional)
+			KeyCerts:
+				-
+
+					# Certificate including intermediate CA certificates, in PEM format.
+					#CertFile: path/to/mail.dbgsym.dev-chain.crt.pem
+					CertFile: {{ mox_tls_smtp_cert_chain_file }}
+
+					# Private key for certificate, in PEM format. PKCS8 is recommended, but PKCS1 and
+					# EC private keys are recognized as well.
+					#KeyFile: path/to/mail.dbgsym.dev.key.pem
+					KeyFile: {{ mox_tls_smtp_key_file }}
+				-
+
+					# Certificate including intermediate CA certificates, in PEM format.
+					#CertFile: path/to/mta-sts.dbgsym.dev-chain.crt.pem
+					CertFile:  {{ mox_tls_mta_sts_chain_file }}
+
+					# Private key for certificate, in PEM format. PKCS8 is recommended, but PKCS1 and
+					# EC private keys are recognized as well.
+					#KeyFile: path/to/mta-sts.dbgsym.dev.key.pem
+					KeyFile: {{ mox_tls_mta_sts_key_file }}
+				-
+
+					# Certificate including intermediate CA certificates, in PEM format.
+					#CertFile: path/to/autoconfig.dbgsym.dev-chain.crt.pem
+					CertFile: {{ mox_tls_autoconfig_chain_file }}
+
+					# Private key for certificate, in PEM format. PKCS8 is recommended, but PKCS1 and
+					# EC private keys are recognized as well.
+					#KeyFile: path/to/autoconfig.dbgsym.dev.key.pem
+					KeyFile: {{ mox_tls_autoconfig_key_file }}
+
+		# (optional)
+		SMTP:
+			Enabled: true
+
+			# Addresses of DNS block lists for incoming messages. Block lists are only
+			# consulted for connections/messages without enough reputation to make an
+			# accept/reject decision. This prevents sending IPs of all communications to the
+			# block list provider. If any of the listed DNSBLs contains a requested IP
+			# address, the message is rejected as spam. The DNSBLs are checked for healthiness
+			# before use, at most once per 4 hours. Example DNSBLs: sbl.spamhaus.org,
+			# bl.spamcop.net. See https://www.spamhaus.org/sbl/ and https://www.spamcop.net/
+			# for more information and terms of use. (optional)
+			#DNSBLs:
+				#- sbl.spamhaus.org
+				#- bl.spamcop.net
+
+		# SMTP over TLS for submitting email, by email applications. Requires a TLS
+		# config. (optional)
+		Submissions:
+			Enabled: true
+
+		# IMAP over TLS for reading email, by email applications. Requires a TLS config.
+		# (optional)
+		IMAPS:
+			Enabled: true
+
+# Destination for emails delivered to postmaster addresses: a plain 'postmaster'
+# without domain, 'postmaster@<hostname>' (also for each listener with SMTP
+# enabled), and as fallback for each domain without explicitly configured
+# postmaster destination.
+Postmaster:
+	Account: {{ mox_default_account }} 
+
+	# E.g. Postmaster or Inbox.
+	Mailbox: Postmaster

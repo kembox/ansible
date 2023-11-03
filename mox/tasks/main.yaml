@@ -1,0 +1,40 @@
+---
+- name: create base dir
+  file:
+    path: "{{ mox_dir }}"
+    owner: root
+    group: "{{ mox_user }}"
+    mode: '0750'
+    state: directory
+
+- name: create config and data dirs
+  file:
+    path: "{{ item }}"
+    owner: "{{ mox_user }}"
+    group: root
+    mode: '2750'
+    #This folder should belong to root group with guid set
+    state: directory
+  with_items:
+    - "{{ mox_dir }}/config"
+    - "{{ mox_data_dir }}"
+
+- name: Install mox binary
+  get_url:
+    url: "https://beta.gobuilds.org/github.com/mjl-/mox@v0.0.7/linux-amd64-go1.21.3/0iy6jnlPUo5IoNJxldd_SmihrDqQ/mox-v0.0.7-go1.21.3"
+    dest: "{{ mox_dir }}/mox"
+    owner: root
+    group: "{{ mox_user }}"
+    mode: '0750'
+    checksum: md5:dc35eb7c3097cbf03f8e00f1ec171fec
+
+- name: copy necessary config file
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mox_dir }}/config/{{ item }}"
+    owner: "{{ mox_user }}"
+    group: root
+    mode: '0640'
+  with_items:
+    - domains.conf
+    - mox.conf
