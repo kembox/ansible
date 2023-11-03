@@ -13,13 +13,13 @@
   roles: 
     - role: nginx-certbot 
       vars:
-        nginx_server_name: "autoconfig.{{ mox_domain }}"
+        nginx_certbot_server_name: "autoconfig.{{ mox_domain }}"
     - role: nginx-certbot 
       vars:
-        nginx_server_name: "mta-sts.{{ mox_domain }}"
+        nginx_certbot_server_name: "mta-sts.{{ mox_domain }}"
     - role: nginx-certbot 
       vars:
-        nginx_server_name: "{{ mox_mail_hostname }}"
+        nginx_certbot_server_name: "{{ mox_mail_hostname }}"
     #I don't know how to loop 1 role through a list of var :| 
 
     - role: mox

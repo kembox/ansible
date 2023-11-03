@@ -19,13 +19,13 @@
 
 - name: Check if certificate already exists
   stat:
-    path: "/etc/letsencrypt/live/{{ nginx_server_name }}/cert.pem"
+    path: "/etc/letsencrypt/live/{{ nginx_certbot_server_name }}/cert.pem"
   register: letsencrypt_cert
 
 - name: Install vhost nginx config
   template:
-    src: sample.conf.j2
-    dest: "{{ nginx_conf_d }}/{{ nginx_server_name }}.conf"
+    src: "{{nginx_certbot_custom_sample}}_sample.conf.j2"
+    dest: "{{ nginx_conf_d }}/{{ nginx_certbot_server_name }}.conf"
     mode: '0644'
     owner: root
     group: root
@@ -34,5 +34,5 @@
 
 - name: run certbot 
   shell: |
-    certbot --nginx -d {{ nginx_server_name }}
+    certbot --nginx -d {{ nginx_certbot_server_name }}
   when: not letsencrypt_cert.stat.exists
