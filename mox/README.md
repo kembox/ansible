@@ -4,7 +4,7 @@ Sample playbook:
 ```yaml
 ---
 - name: Setup mox as email server
-  hosts: mox
+  hosts: your_host 
   vars_files: 
     - ../ansible-playbooks/var_files/secrets/mox.yaml
   vars:
