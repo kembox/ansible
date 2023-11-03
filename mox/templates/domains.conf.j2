@@ -30,7 +30,8 @@ Domains:
 					Expiration: 72h
 
 					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
-					PrivateKeyFile: dkim/2023a._domainkey.dbgsym.dev.20231101T132646.ed25519key.pkcs8.pem
+					PrivateKeyFile: dkim/{{ mox_dkim_selector }}a._domainkey.{{ mox_domain }}.{{ mox_mta_sts_policy_version_id }}.ed25519key.pkcs8.pem
+
 				{{mox_dkim_selector}}b:
 
 					# Period a signature is valid after signing, as duration, e.g. 72h. The period
@@ -39,7 +40,7 @@ Domains:
 					Expiration: 72h
 
 					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
-					PrivateKeyFile: dkim/2023b._domainkey.dbgsym.dev.20231101T132646.rsakey.pkcs8.pem
+					PrivateKeyFile: dkim/{{ mox_dkim_selector }}b._domainkey.{{ mox_domain }}.{{ mox_mta_sts_policy_version_id }}.rsakey.pkcs8.pem
 				{{mox_dkim_selector}}c:
 
 					# Period a signature is valid after signing, as duration, e.g. 72h. The period
@@ -48,7 +49,7 @@ Domains:
 					Expiration: 72h
 
 					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
-					PrivateKeyFile: dkim/2023c._domainkey.dbgsym.dev.20231101T132646.ed25519key.pkcs8.pem
+					PrivateKeyFile: dkim/{{ mox_dkim_selector }}c._domainkey.{{ mox_domain }}.{{ mox_mta_sts_policy_version_id }}.ed25519key.pkcs8.pem
 				{{mox_dkim_selector}}d:
 
 					# Period a signature is valid after signing, as duration, e.g. 72h. The period
@@ -57,7 +58,7 @@ Domains:
 					Expiration: 72h
 
 					# Either an RSA or ed25519 private key file in PKCS8 PEM form.
-					PrivateKeyFile: dkim/2023d._domainkey.dbgsym.dev.20231101T132646.rsakey.pkcs8.pem
+					PrivateKeyFile: dkim/{{ mox_dkim_selector }}d._domainkey.{{ mox_domain }}.{{ mox_mta_sts_policy_version_id }}.rsakey.pkcs8.pem
 
 			# List of selectors that emails will be signed with. (optional)
 			Sign:
@@ -119,7 +120,7 @@ Domains:
 			Localpart: tls-reports
 
 			# Account to deliver to.
-			Account: {{ mox_default_account }} 
+			Account: {{ mox_default_account }}
 
 			# Mailbox to deliver to, e.g. TLSRPT.
 			Mailbox: TLSRPT
