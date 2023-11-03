@@ -1,0 +1,4 @@
+---
+nginx_server_name: "yourdomain.com"
+nginx_conf_d: "/etc/nginx/conf.d"
+nginx_conf_file: "/etc/nginx/nginx.conf"

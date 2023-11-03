@@ -1,0 +1,16 @@
+server {
+
+    root /var/www/{{ nginx_server_name }}/;
+    index index.html;
+    server_tokens off;
+
+    server_name {{ nginx_server_name }};
+
+    access_log /var/log/nginx/{{ nginx_server_name }}.access.log;
+    error_log /var/log/nginx/{{ nginx_server_name }}.error.log;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+}
