@@ -42,7 +42,7 @@
 
 - name: Confirm to generate DKIM key files
   pause:
-    prompt: "Are you sure you want to generate DKIM files ? (yes/no)"
+    prompt: "This action may replace your existing DKIM keys. Are you sure to proceed ? (yes/no)"
   register: confirm_generate_dkim
   when: mox_auto_gen_dkim == "true"
 
