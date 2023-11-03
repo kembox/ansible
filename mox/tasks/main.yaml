@@ -72,6 +72,10 @@
   template:
     src: mox.service.j2
     dest: /lib/systemd/system/meo-mox.service 
+- name: Ensure meo-mox service is started
+  systemd:
+    name: meo-mox
+    state: started
 
 - name: Set different passwords
   shell: |
