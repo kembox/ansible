@@ -63,9 +63,9 @@
 
 - name: correct permission for dkim keys
   shell: |
-    chown "{{ mox_user }}":root "{{ mox_dir }}/config/dkim"
-    chmod 750 "{{ mox_dir }}/config/dkim"
-    chmod 640 "{{ mox_dir }}/config/dkim"/*
+    chown {{ mox_user }}:root {{ mox_dir }}/config/dkim
+    chmod 750 {{ mox_dir }}/config/dkim
+    chmod 640 {{ mox_dir }}/config/dkim/*
   when: mox_auto_gen_dkim == "true"
 
 - name: Install systemctl config  
@@ -73,4 +73,18 @@
     src: mox.service.j2
     dest: /lib/systemd/system/meo-mox.service 
 
-  
+- name: Set different passwords
+  shell: |
+    echo {{mox_admin_passwd}} {{ mox_dir }}/mox setadminpassword
+    echo {{mox_default_user_passwd}} {{ mox_dir }}/mox setaccountpassword {{mox_default_account}}
+  #These 2 variables should be encrypted by ansible vault, imported by var_files/include_vars
+ 
+- name: Generate instruction to update DNS records  
+  shell: |
+    cd {{ mox_dir }}
+    {{ mox_dir }}/mox config dnsrecords {{ mox_domain }}
+  register: dns_output
+
+- name: Print out instruction to update DNS records  
+  pause:
+    prompt: "{{ dns_output.stdout  }}\nPLEASE UPDATE YOUR DNS RECORDS FOLLOWING THIS INSTRUCTION TO FINISH THIS SETUP"
