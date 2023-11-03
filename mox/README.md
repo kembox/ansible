@@ -25,6 +25,11 @@ Sample playbook:
     mox_default_account: "you"
     mox_mta_sts_policy_version_id: "20232323062646"
 
+    mox_auto_gen_dkim: "false"
+    #by default it is set to true, but it will keep warning you
+    #about the possibility of damaging current DKIM keys
+    #Set this to false after the first run to avoid such message
+
   roles: 
     - role: nginx-certbot 
       vars:

@@ -42,7 +42,12 @@
 
 - name: Confirm to generate DKIM key files
   pause:
-    prompt: "This action may replace your existing DKIM keys. Are you sure to proceed ? (yes/no)"
+    prompt: |
+      This action must be run only ONCE, otherwise it may replace your existing DKIM keys. 
+      It's ok if this is the very first run. Are you sure to proceed ? (yes/no)
+      Type "no" to skip this action
+      If you want to disable this message permanently, mox_auto_gen_dkim = "false" in your config
+      Thanks
   register: confirm_generate_dkim
   when: mox_auto_gen_dkim == "true"
 

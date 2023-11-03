@@ -28,7 +28,7 @@ mox_public_ip: "your_ip"
 mox_domain: "yourdomain.com"
 mox_mail_hostname: "mail.yourdomain.com"
 mox_dkim_selector: "2023" #random string to generate DKIM key
-mox_auto_gen_dkim: "false"
+mox_auto_gen_dkim: "true"
 mox_default_account: "you_human_user"
 mox_mta_sts_policy_version_id: "202311v1"
 #You may want to pick the version number yourself
