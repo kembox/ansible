@@ -46,3 +46,5 @@ Sample playbook:
 ```
 
 We still need to update DNS records at the end of the process ( just once though ). No magic with that step. 
+When you finished with your DNS records. Make sure `meo-mox` service is started without any problem. ( see the log in `journalctl -fu meo-mox`).
+By default the webmail isn't opened to the internet, and it's ugly as well, use Thunderbird instead. I haven't tried with outlook but it should work as well. 
