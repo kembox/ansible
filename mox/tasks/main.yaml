@@ -40,11 +40,17 @@
     - domains.conf
     - mox.conf
 
+- name: Confirm to generate DKIM key files
+  pause:
+    prompt: "Are you sure you want to generate DKIM files ? (yes/no)"
+  register: confirm_generate_dkim
+  when: mox_auto_gen_dkim == "true"
+
 - name: generate DKIM ed25519 keys from current configs
   shell: |
     "{{ mox_dir }}/mox" dkim gened25519 > "{{ mox_dir }}"/config/dkim/"{{ mox_dkim_selector }}{{ item }}"._domainkey."{{ mox_domain }}"."{{ mox_mta_sts_policy_version_id }}".ed25519key.pkcs8.pem
   with_items: ["a","c"] 
-  when: mox_auto_gen_dkim == "true"
+  when: mox_auto_gen_dkim == "true" and (confirm_generate_dkim.user_input | bool)
     
 
 - name: generate DKIM rsa keys from current configs #yeah it's ugly but it works. Feel free merge it into 1 cool loop please
@@ -53,7 +59,7 @@
   with_items: ["b","d"]
   #These sequences of item is important: we need 4 keys, with mixed type of rsa and ed25519
   #so our record will be selector a,c in ed25519 - selectorb,d in rsa
-  when: mox_auto_gen_dkim == "true"
+  when: mox_auto_gen_dkim == "true" and (confirm_generate_dkim.user_input | bool)
 
 - name: correct permission for dkim keys
   shell: |
