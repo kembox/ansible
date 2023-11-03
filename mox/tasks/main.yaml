@@ -75,6 +75,7 @@
 
 - name: Set different passwords
   shell: |
+    cd {{ mox_dir }}
     echo -n {{mox_admin_passwd}} | {{ mox_dir }}/mox setadminpassword
     echo -n {{mox_default_user_passwd}} | {{ mox_dir }}/mox setaccountpassword {{mox_default_account}}
   #These 2 variables should be encrypted by ansible vault, imported by var_files/include_vars
@@ -90,4 +91,4 @@
 
 - name: Print out instruction to update DNS records  
   pause:
-    prompt: "{{ dns_output.stdout_lines }}\nPLEASE UPDATE YOUR DNS RECORDS FOLLOWING THIS INSTRUCTION TO FINISH THIS SETUP"
+    prompt: "{{ dns_output.stdout }}\nPLEASE UPDATE YOUR DNS RECORDS FOLLOWING THIS INSTRUCTION TO FINISH THIS SETUP"
