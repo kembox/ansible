@@ -67,4 +67,10 @@
     chmod 750 "{{ mox_dir }}/config/dkim"
     chmod 640 "{{ mox_dir }}/config/dkim"/*
   when: mox_auto_gen_dkim == "true"
+
+- name: Install systemctl config  
+  template:
+    src: mox.service.j2
+    dest: /lib/systemd/system/meo-mox.service 
+
   
