@@ -78,12 +78,17 @@
     echo {{mox_admin_passwd}} {{ mox_dir }}/mox setadminpassword
     echo {{mox_default_user_passwd}} {{ mox_dir }}/mox setaccountpassword {{mox_default_account}}
   #These 2 variables should be encrypted by ansible vault, imported by var_files/include_vars
+  changed_when: false
  
 - name: Generate instruction to update DNS records  
   shell: |
     cd {{ mox_dir }}
     {{ mox_dir }}/mox config dnsrecords {{ mox_domain }}
   register: dns_output
+  changed_when: false
+
+- name: setup nginx proxy and related certificates
+  include: nginx_cert.yaml
 
 - name: Print out instruction to update DNS records  
   pause:
