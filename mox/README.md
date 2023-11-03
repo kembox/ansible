@@ -43,3 +43,5 @@ Sample playbook:
     - role: mox
       tags: mox
 ```
+
+We still need to update DNS records at the end of the process ( just once though ). No magic with that step. 
