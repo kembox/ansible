@@ -1,0 +1,20 @@
+server {
+
+    root /var/www/{{ nginx_certbot_server_name }}/;
+    index index.html;
+    server_tokens off;
+
+    server_name {{ nginx_certbot_server_name }};
+
+    access_log /var/log/nginx/{{ nginx_certbot_server_name }}.access.log;
+    error_log /var/log/nginx/{{ nginx_certbot_server_name }}.error.log;
+
+    location / {
+        proxy_pass http://127.0.0.1:81;
+    }
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+}

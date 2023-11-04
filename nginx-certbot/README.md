@@ -1,0 +1,1 @@
+Simple TLS certificates generation for nginx. Just feed a initial config in and let certbot takes care of the rest
