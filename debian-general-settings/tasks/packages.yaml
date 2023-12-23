@@ -1,0 +1,17 @@
+---
+- name: Install basic packages
+  apt:
+      pkg:
+        - strace
+        - bpftrace
+        - atop
+        - iotop
+        - dnsutils 
+        - procps 
+        - inotify-tools
+
+        #editor
+        - vim
+        - screen
+      state: latest
+      update_cache: yes

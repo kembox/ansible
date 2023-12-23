@@ -1,0 +1,7 @@
+---
+# Install packages
+- include_tasks : packages.yaml
+
+# sysctl settings
+- include_tasks : sysctl.yaml
+

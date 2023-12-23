@@ -1,0 +1,8 @@
+---
+- name: Update settings defined in vars file
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}' 
+    state: present
+    reload: yes
+  with_dict: '{{ sysctl_config }}'
