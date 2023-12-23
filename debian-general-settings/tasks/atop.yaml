@@ -1,0 +1,10 @@
+---
+- name: Overwrite default atop settings
+  copy:
+    src: atop
+    dest: /etc/default/atop
+    owner: root
+    group: root
+    mode: '1644'
+  notify:
+    - restart atop

@@ -1,0 +1,4 @@
+- name: restart atop
+  systemd_service:
+    state: restarted
+    name: atop 

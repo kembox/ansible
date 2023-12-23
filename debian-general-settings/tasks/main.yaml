@@ -5,3 +5,5 @@
 # sysctl settings
 - include_tasks : sysctl.yaml
 
+- include_tasks: atop.yaml
+
