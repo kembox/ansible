@@ -5,4 +5,4 @@
     value: '{{ item.value }}' 
     state: present
     reload: yes
-  with_dict: '{{ sysctl_config }}'
+  with_dict: '{{ general_settings_sysctl_config }}'

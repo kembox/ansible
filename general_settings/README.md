@@ -1,5 +1,7 @@
 My starter pack to start working with a debian server: packages to install, sysctl settings to tweak and so on
 
+Current built for debian only. 
+
 Sample playbook:
 
 ```

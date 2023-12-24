@@ -2,6 +2,7 @@
 - name: Install basic packages
   apt:
       pkg:
+        #tshoot
         - strace
         - bpftrace
         - atop
@@ -9,6 +10,15 @@
         - dnsutils 
         - procps 
         - inotify-tools
+        - iftop
+
+        #handy tool
+        - vmtouch
+        - curl
+        - wget
+
+        #sec
+        - nmap
 
         #editor
         - vim

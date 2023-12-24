@@ -1,0 +1,11 @@
+---
+# Install packages
+- import_tasks : packages.yaml
+  tags: packages
+
+# sysctl settings
+- import_tasks: sysctl.yaml
+  tags: sysctl
+
+- import_tasks: basic_app_config.yaml
+  tags: basic_app
