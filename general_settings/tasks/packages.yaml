@@ -11,6 +11,8 @@
         - procps 
         - inotify-tools
         - iftop
+        - net-tools
+        - lsof
 
         #handy tool
         - vmtouch
