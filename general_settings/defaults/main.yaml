@@ -1,5 +1,0 @@
----
-general_settings_sysctl_config:
-  net.ipv4.tcp_tw_reuse: 1
-  net.ipv4.ip_local_port_range: 10000 60999
-
