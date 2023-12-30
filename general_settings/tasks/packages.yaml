@@ -13,6 +13,7 @@
         - iftop
         - net-tools
         - lsof
+        - rsyslog
 
         #handy tool
         - vmtouch
