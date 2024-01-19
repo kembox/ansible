@@ -5,7 +5,13 @@
     state: latest
     pkg:
       - nginx
-      - python3-certbot-nginx
+      - snapd
+  become: true
+
+- name: Install cerbot
+  shell:
+    cmd: snap install --classic certbot
+  become: true
 
 - name: Install custom nginx.conf
   copy:
@@ -15,24 +21,27 @@
     owner: root
     group: root
   notify: restart nginx
-
+  become: true
 
 - name: Check if certificate already exists
   stat:
     path: "/etc/letsencrypt/live/{{ nginx_certbot_server_name }}/cert.pem"
   register: letsencrypt_cert
+  become: true
 
 - name: Install vhost nginx config
   template:
     src: "{{nginx_certbot_custom_sample}}_sample.conf.j2"
-    dest: "{{ nginx_conf_d }}/{{ nginx_certbot_server_name }}.conf"
+    dest: "{{ nginx_certbot_conf_d }}/{{ nginx_certbot_server_name }}.conf"
     mode: '0644'
     owner: root
     group: root
   notify: reload nginx
   when: not letsencrypt_cert.stat.exists
+  become: true
 
 - name: run certbot 
   shell: |
-    certbot --nginx -d {{ nginx_certbot_server_name }}
+    certbot --nginx -d {{ nginx_certbot_server_name }} --non-interactive --agree-tos -m {{ nginx_certbot_notify_email }}
   when: not letsencrypt_cert.stat.exists
+  become: true
