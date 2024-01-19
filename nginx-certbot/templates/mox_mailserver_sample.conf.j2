@@ -4,7 +4,7 @@ server {
     index index.html;
     server_tokens off;
 
-    server_name {{ nginx_certbot_server_name }};
+    server_name __PLACE_HOLDER__;
 
     access_log /var/log/nginx/{{ nginx_certbot_server_name }}.access.log;
     error_log /var/log/nginx/{{ nginx_certbot_server_name }}.error.log;

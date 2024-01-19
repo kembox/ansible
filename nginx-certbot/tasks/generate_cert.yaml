@@ -1,0 +1,24 @@
+---
+- name: Generate certificates
+  block:
+    - name: Check if certificate already exists
+      stat:
+        path: "/etc/letsencrypt/live/{{ item }}/cert.pem"
+      register: letsencrypt_cert
+
+    - name: Install vhost nginx config
+      template:
+        src: "{{nginx_certbot_custom_sample}}_sample.conf.j2"
+        dest: "{{ nginx_certbot_conf_d }}/{{ item }}.conf"
+        mode: '0644'
+        owner: root
+        group: root
+      notify: reload nginx
+      when: not letsencrypt_cert.stat.exists
+
+    - name: run certbot 
+      shell: |
+        sed -i 's/__PLACE_HOLDER__/{{ item }}/g' {{ nginx_certbot_conf_d }}/{{ item }}.conf
+        certbot --nginx -d {{ item }} --non-interactive --agree-tos -m {{ nginx_certbot_notify_email }}
+      when: not letsencrypt_cert.stat.exists
+  become: true

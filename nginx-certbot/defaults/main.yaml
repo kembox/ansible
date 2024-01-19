@@ -1,5 +1,6 @@
 ---
-nginx_certbot_server_name: "yourdomain.com"
+nginx_certbot_server_names:
+  - "yourdomain.com"
 nginx_certbot_custom_sample: ""
 nginx_certbot_notify_email: ""
 nginx_certbot_conf_d: "/etc/nginx/conf.d"
